@@ -1,0 +1,48 @@
+{
+  "type": "FeatureCollection",
+  "name": "scan_stations",
+  "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+  "_korrektur": "Ersetzt SCAN_Stationen.geojson, die erfundene Koordinaten/IDs enthielt (Cook Farm faelschlich bei 47.117/-118.383 in Zelle 28). Koordinaten + scan_id aus validate_scan_disagg.py und den SCAN-CSV-Dateinamen (2198 Cook Farm, 2021 Lind). Felder mit [pruefen] wurden NICHT verifiziert.",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Cook Farm Field D",
+        "scan_id": 2198,
+        "network": "SCAN",
+        "lat": 46.783681,
+        "lon": -117.080000,
+        "cell_nr": 24,
+        "lage": "Palouse (SE)",
+        "depths_cm": "5, 10, 20, 51, 102",
+        "variable": "Volumetric Soil Moisture (SMS, 5 Tiefen)",
+        "zeitraum_daten": "2013-2018",
+        "url": "https://wcc.sc.egov.usda.gov/nwcc/site?sitenum=2198",
+        "county": "Whitman County, WA [pruefen]",
+        "elevation_m": null,
+        "installed": "[pruefen]"
+      },
+      "geometry": { "type": "Point", "coordinates": [-117.080000, 46.783681] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Lind #1",
+        "scan_id": 2021,
+        "network": "SCAN",
+        "lat": 47.006942,
+        "lon": -118.573608,
+        "cell_nr": 27,
+        "lage": "Columbia Plateau (NW), Zelle 27 — Station liegt ~0,8 km noerdlich der 47,0-Grad-Zellgrenze (die Zelle, in der sie tatsaechlich liegt / nearest grid).",
+        "depths_cm": "5, 10, 20, 51, 102",
+        "variable": "Volumetric Soil Moisture (SMS, 5 Tiefen)",
+        "zeitraum_daten": "1993-2018",
+        "url": "https://wcc.sc.egov.usda.gov/nwcc/site?sitenum=2021",
+        "county": "Adams County, WA [pruefen]",
+        "elevation_m": null,
+        "installed": "[pruefen]"
+      },
+      "geometry": { "type": "Point", "coordinates": [-118.573608, 47.006942] }
+    }
+  ]
+}

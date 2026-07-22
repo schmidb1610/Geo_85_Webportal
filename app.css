@@ -1,0 +1,155 @@
+/* ================================================================
+   Green-Water-Portal · app.css — additive Ergänzungen (Stufe 1)
+   Nur für die datengetriebenen Panel-Elemente; nutzt die Variablen
+   und die Optik des Design-Templates (Look unverändert).
+   ================================================================ */
+
+/* Unsicherheits-Band (95-%-KI der oberen Grenze) hinter dem Korridor */
+/* .band-ci (Schraffur) entfernt */
+.gauge .band{z-index:1}
+
+/* Trend-Tabelle: Fokusfenster hervorheben */
+.kv.focus{background:var(--paper-2);border-radius:6px;margin:2px -6px;padding:5px 6px}
+.kv .v small{font-family:var(--mono);font-size:10px}
+.kv .v sub{font-size:8px}
+
+/* Attribution-Balken */
+.attr{display:flex;flex-direction:column;gap:7px;margin-top:2px}
+.attr-row{display:grid;grid-template-columns:118px 1fr 60px;align-items:center;gap:9px}
+.attr-k{font-size:11.5px;color:var(--ink-2)}
+.attr-bar{position:relative;height:9px;background:var(--paper-2);border-radius:5px;overflow:hidden;display:flex}
+.attr-bar i{display:block;height:100%;border-radius:5px}
+.attr-v{font-family:var(--mono);font-size:11px;color:var(--ink);text-align:right}
+
+/* cv-Zeitreihe (SVG) */
+.spark .cvsvg{height:120px}
+.cvt{font-family:var(--mono);font-size:7.5px;fill:var(--ink-3)}
+.cvg{stroke:rgba(0,0,0,.07);stroke-width:1}
+.cvmark{stroke:var(--ink);stroke-width:1;stroke-dasharray:2 2;opacity:.55}
+.cvbound{stroke:#c1462b;stroke-width:1.5;stroke-dasharray:5 3;opacity:.9}
+.cvunit{font-family:var(--mono);font-size:9.5px;color:var(--ink-3);margin-top:5px}
+
+/* Stufe-2-Sektion (25-m-Raster folgt) */
+.section.stage2 .layer-grid{opacity:.5}
+.section.stage2 .layer-btn[disabled]{cursor:not-allowed}
+.section.stage2 .layer-btn .swatch{background:var(--paper-2)}
+
+/* Zell-Tooltip (falls im Template-CSS nicht abgedeckt) */
+.leaflet-tooltip.cell-tt{background:#1a1e1c;border:none;color:#f4f3ee;
+  font-family:var(--mono);font-size:11px;box-shadow:none;padding:3px 7px}
+.leaflet-tooltip.cell-tt::before{display:none}
+
+/* Jahr-Schieber: rechtsbündig an den Kartenrand (dockt beim Verbreitern
+   automatisch ans Info-Panel an), etwas höher über der Esri-Attribution
+   (kleine Lücke), schlanker – überlappt die Legende links nicht mehr.
+   Nur für breite Fenster; die Mobile-Anordnung (≤820px) bleibt unberührt. */
+@media(min-width:821px){
+  .timebar{
+    left:auto; right:14px; transform:none;
+    bottom:32px;
+    min-width:0;
+    width:clamp(300px, 42%, 460px);
+    max-width:calc(100% - 28px);
+  }
+}
+
+/* Fallstudie-Control (25-m-Raster-Layer-Umschalter) */
+#fsBtn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round}
+.fs-control{position:absolute;top:14px;left:52px;z-index:650;display:none;
+  background:rgba(255,255,255,.95);border:1px solid var(--line-2);border-radius:10px;
+  box-shadow:var(--shadow);padding:10px 12px;width:212px;backdrop-filter:blur(6px)}
+.fs-control.on{display:block}
+.fs-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.fs-head b{font-size:10.5px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+.fs-close{border:1px solid var(--line-2);background:#fff;border-radius:6px;font-family:var(--mono);
+  font-size:10px;padding:3px 7px;cursor:pointer;color:var(--ink-2)}
+.fs-close:hover{border-color:var(--ink-3);color:var(--ink)}
+.fs-layers{display:flex;flex-direction:column;gap:3px}
+.fs-lyr{text-align:left;border:1px solid transparent;background:none;border-radius:6px;
+  padding:5px 8px;font-size:12px;cursor:pointer;color:var(--ink-2);font-family:var(--sans)}
+.fs-lyr:hover{background:var(--paper-2);color:var(--ink)}
+.fs-lyr.on{background:var(--ink);color:#fff;font-weight:600}
+.fs-lyr.static:not(.on){background:rgba(0,0,0,.05)}
+.fs-control.loading{opacity:.65;pointer-events:none}
+@media(max-width:820px){ .fs-control{left:14px;top:auto;bottom:120px} }
+
+.cz-open{width:100%;padding:9px 12px;border:1px solid #d8d5cc;border-radius:8px;background:#1a1e1c;color:#fff;font:inherit;font-weight:600;cursor:pointer;text-align:center}
+.cz-open:hover{opacity:.9}
+
+.fs-vec{display:flex;gap:6px;margin-top:7px;padding-top:7px;border-top:1px solid rgba(0,0,0,.14)}
+.fs-vlyr{flex:1;text-align:center;border:1px solid #d8d5cc;background:none;border-radius:6px;padding:5px 6px;font:inherit;font-size:12px;cursor:pointer;color:#1a1e1c}
+.fs-vlyr:hover{background:#f0eee7}
+.fs-vlyr.on{background:#1a1e1c;color:#fff;font-weight:600}
+.cat-legend{display:flex;flex-direction:column;gap:3px;margin:5px 0}
+.cat-row{display:flex;align-items:center;gap:7px;font-size:12px;color:#1a1e1c}
+.cat-sw{width:14px;height:14px;border-radius:3px;flex:none;border:1px solid rgba(0,0,0,.25)}
+.leaflet-control-scale{margin:0 0 15px 16px !important}
+.leaflet-control-scale-line{background:rgba(255,255,255,.92);border:1.5px solid #1a1e1c;border-radius:6px;color:#1a1e1c;font:600 10px/1.4 ui-monospace,monospace;padding:2px 9px;box-shadow:0 1px 4px rgba(0,0,0,.12)}
+
+.yr-sec .yr-row{display:flex;align-items:center;gap:10px;margin:6px 0 4px}
+.yr-track{flex:1;min-width:0}
+.yr-track .anchors{margin-top:3px}
+.yr-sec input[type=range]{width:100%;display:block;accent-color:#1a1e1c}
+.yr-out{font-family:var(--mono,monospace);font-weight:600;min-width:40px;text-align:right}
+
+/* High-Risk-Linie + Zonen-Beschriftung im Gauge */
+.gauge .hr{position:absolute;top:-11px;height:23px;width:2px;background:#6a1b7a}
+.gauge .hr::after{content:"High-Risk 50 %";position:absolute;top:-27px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:9px;font-weight:600;color:#6a1b7a;white-space:nowrap}
+.zonebar{display:flex;gap:4px;margin:6px 6px 2px}
+.zonebar .zb{flex:1;text-align:center;font-family:var(--mono,ui-monospace,monospace);font-size:8.5px;line-height:1.25;color:var(--ink-3,#7a8078);border-top:2px solid transparent;padding-top:4px}
+.zonebar .zb.safe{border-color:#3f9b46}.zonebar .zb.risk{border-color:#e35f22}.zonebar .zb.high{border-color:#5a1836}
+.q{cursor:pointer}
+.q-pop{background:#fbfaf6;border:1px solid #e2ded2;border-radius:8px;padding:10px 13px;margin:8px 0 2px;font-size:12px;line-height:1.5;color:#454b46;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.q-pop p{margin:0 0 7px}.q-pop p:last-child{margin-bottom:0}.q-pop b{color:#1a1e1c}
+
+.info-modal{max-width:640px;width:calc(100% - 48px)}
+.info-body{padding:18px 22px 22px;overflow:auto;line-height:1.55;font-size:13.5px;color:var(--ink-2,#454b46)}
+.info-body h4{font-family:var(--mono,monospace);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#1a1e1c;margin:16px 0 6px}
+.info-body h4:first-child{margin-top:0}
+.info-body ul{margin:6px 0;padding-left:18px}
+.info-body li{margin:3px 0}
+.info-body b{color:#1a1e1c}
+.info-body .src{font-size:11px;color:#8a8f88;margin-top:14px}
+
+.leaflet-tooltip.cell-num{background:transparent;border:none;box-shadow:none;padding:0;color:#000;
+  font-family:var(--mono,ui-monospace,monospace);font-weight:700;font-size:15px;
+  text-shadow:-1.7px -1.7px 0 #fff,1.7px -1.7px 0 #fff,-1.7px 1.7px 0 #fff,1.7px 1.7px 0 #fff,0 0 3px #fff}
+.leaflet-tooltip.cell-num::before{display:none}
+
+.yr-mode{margin-top:10px}
+.yr-mode button{flex:1;font-size:10px}
+
+.yr-step{display:inline-flex;flex-direction:column;gap:2px;margin-left:2px}
+.yr-step button{width:20px;height:13px;padding:0;line-height:1;border:1px solid #d8d5cc;background:#fff;border-radius:4px;font-size:7px;color:#1a1e1c;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.yr-step button:hover{background:#f0eee7;border-color:#b9b5a8}
+.yr-step button:active{background:#e6e3da}
+
+.ctx-hint.aoi-hint{max-width:225px;font-size:11.5px}
+.aoi-hint b{color:#1a1e1c}
+
+.aoi-note{background:#f3f6f4;border-left:3px solid #1a9850;border-radius:6px;padding:9px 12px;margin-bottom:14px}
+.aoi-note .note-p{margin:0}
+
+
+/* ===== Interpretation-Overlays (Buttons + eigene Legende) ===== */
+#interpControl{display:flex;flex-wrap:wrap;gap:6px}
+#interpControl .ip-lyr{font-size:11px;padding:5px 9px;border:1px solid var(--line-2);border-radius:6px;
+  background:var(--paper);color:var(--ink-2);font-family:inherit;cursor:pointer}
+#interpControl .ip-lyr:hover{border-color:var(--ink-3)}
+#interpControl .ip-lyr.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.legend.interp-legend{top:14px;right:14px;left:auto;bottom:auto;max-width:230px}
+.lg-classes{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;font-size:11px;margin:4px 0}
+.lg-row{display:flex;align-items:center;gap:5px}
+.lg-sw{width:12px;height:12px;border-radius:2px;display:inline-block;border:1px solid rgba(0,0,0,.15);flex:none}
+
+
+/* ===== Interpretation · Bedienfeld (Toolbar-Button oeffnet dieses Panel) ===== */
+#interpPanel{position:absolute;top:96px;left:52px;z-index:650;width:214px;display:none;
+  background:rgba(255,255,255,.95);border:1px solid var(--line-2);border-radius:10px;
+  box-shadow:var(--shadow);padding:10px 12px;backdrop-filter:blur(6px)}
+#interpPanel .ip-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+#interpPanel .ip-head b{font-size:10.5px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+#interpPanel .ip-x{margin-left:auto;border:1px solid var(--line-2);background:#fff;border-radius:6px;
+  font-family:var(--mono);cursor:pointer;padding:1px 8px;line-height:1.5;color:var(--ink-2)}
+#interpPanel .ip-x:hover{border-color:var(--ink-3)}
+@media(max-width:820px){ #interpPanel{top:auto;bottom:120px;left:14px} }

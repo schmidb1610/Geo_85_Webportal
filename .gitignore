@@ -1,0 +1,28 @@
+# ── Betriebssystem ────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Backups / frühere Versionen ───────────────────────────────
+*.bak
+*.bak2_*
+*.bak_*
+data/cell_stats.json.bak
+
+# ── Temporäre Artefakte (GDAL / Tests) ────────────────────────
+*.tmp
+*.ovr.tmp
+_probe_write.txt
+**/__deltest
+
+# ── Nicht genutzte / doppelte Daten ───────────────────────────
+# 50-m-Downsampling der Zell-Raster: vom Portal NICHT referenziert
+cog/zellen50/
+# Quell-GPKG der SCAN-Stationen (Portal nutzt data/scan_stations.geojson)
+scan_validation_stations.gpkg
+
+# ── Interne Arbeits-/Prozessdateien (nicht für Veröffentlichung) ─
+COWORK_offene_Aenderungen.md
+INTERPRETATION_einbau.md
+PROMPT_Textueberarbeitung.md
+TEXT_INVENTAR.md
+Uebergabe_SCAN_Portal/
