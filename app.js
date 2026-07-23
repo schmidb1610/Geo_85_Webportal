@@ -786,48 +786,42 @@ function interpColorFn(key){
     const c=st[i].map((x,k)=>Math.round(x+(st[i+1][k]-x)*r));
     return `rgb(${c.join(',')})`; };
 }
-// Bewaehrtes Muster wie Fallstudie/Zellen: ALLE Overlays einmal laden und (Deckkraft 0)
-// zur Karte hinzufuegen; Umschalten passiert NUR ueber die Deckkraft. Das umgeht den
-// Render-Bug beim Hinzufuegen eines zweiten GeoRasterLayers ohne Ansichtswechsel.
-// Alle Overlays einmal vorladen (rendern zuverlaessig) und per Deckkraft umschalten.
-// Nach Zoom/Pan wird die Deckkraft auf ALLE Ebenen erneut gesetzt -> frisch gerenderte
-// Kacheln versteckter Ebenen bleiben unsichtbar (kein "Geistern" der falschen Ebene).
-const interpLayers={};    // key -> GeoRasterLayer (alle einmal hinzugefuegt)
-let interpLoaded=false;
+// Es ist immer nur GENAU EINE Interpretation-Ebene auf der Karte: beim Umschalten
+// wird die bisherige entfernt und die neue SICHTBAR (opacity 0.6) hinzugefuegt.
+// Ein frisch hinzugefuegter sichtbarer GeoRasterLayer zeichnet zuverlaessig; das
+// Vorladen mehrerer Ebenen mit opacity 0 zeichnete ohne View-Wechsel nicht (die
+// Fallstudie/Zellen umgehen das per fitBounds/setView, das es hier nicht gibt).
+const interpLayers={};    // key -> GeoRasterLayer (Cache; nur die aktive haengt an der Karte)
 let interpCurrent=null;   // sichtbares Overlay (oder null)
 let interpTopKey=null;    // fuer Legende (=interpCurrent)
-let interpHooked=false;
 function syncInterpButtons(){
   document.querySelectorAll('#interpControl .ip-lyr').forEach(b=>b.classList.toggle('on',interpCurrent===b.dataset.k));
 }
-function interpApplyOpacity(){
-  Object.keys(interpLayers).forEach(k=>{ const l=interpLayers[k]; if(l) l.setOpacity(k===interpCurrent?0.6:0); });
-}
-async function interpEnsure(){
-  if(interpLoaded) return;
-  interpLoaded=true;
-  await Promise.all(Object.keys(INTERP).map(async (key,i)=>{
-    try{
-      const gr=await loadGeoraster(INTERP[key].file);
-      const layer=new GeoRasterLayer({georaster:gr, opacity:0, resolution:128, zIndex:480+i, keepBuffer:8,
-        pixelValuesToColorFn:interpColorFn(key)});
-      layer.addTo(map); interpLayers[key]=layer;
-    }catch(e){ console.error('Interpretation-COG konnte nicht geladen werden:',key,e); }
-  }));
-  interpApplyOpacity();
-  // Deckkraft nach jedem Zoom/Pan erneut zuweisen (nur CSS, kein Neu-Rendern).
-  if(!interpHooked){ map.on('zoomend moveend', interpApplyOpacity); interpHooked=true; }
+async function interpGetLayer(key){
+  if(interpLayers[key]) return interpLayers[key];
+  const gr=await loadGeoraster(INTERP[key].file);
+  interpLayers[key]=new GeoRasterLayer({georaster:gr, opacity:0.6, resolution:128, zIndex:480, keepBuffer:8,
+    pixelValuesToColorFn:interpColorFn(key)});
+  return interpLayers[key];
 }
 async function interpToggle(key){
-  await interpEnsure();
-  interpCurrent = (interpCurrent===key) ? null : key;
-  interpTopKey=interpCurrent;
-  interpApplyOpacity();
+  const next=(interpCurrent===key)?null:key;   // erneuter Klick blendet aus
+  if(interpCurrent && interpLayers[interpCurrent]) map.removeLayer(interpLayers[interpCurrent]);
+  interpCurrent=next; interpTopKey=next;
+  if(next){
+    try{
+      const l=await interpGetLayer(next);
+      l.setOpacity(0.6); l.addTo(map);
+      if(typeof l.redraw==='function') l.redraw();   // Zeichnen erzwingen (kein View-Wechsel noetig)
+    }catch(e){ console.error('Interpretation-COG konnte nicht geladen werden:',next,e);
+      interpCurrent=null; interpTopKey=null; }
+  }
   interpRenderLegend(); syncInterpButtons();
 }
 function interpClear(){
+  if(interpCurrent && interpLayers[interpCurrent]) map.removeLayer(interpLayers[interpCurrent]);
   interpCurrent=null; interpTopKey=null;
-  interpApplyOpacity(); interpRenderLegend(); syncInterpButtons();
+  interpRenderLegend(); syncInterpButtons();
 }
 function interpRenderLegend(){
   const leg=document.getElementById('interpLegend'); if(!leg) return;
