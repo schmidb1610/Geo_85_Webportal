@@ -4,7 +4,7 @@
    KEINE synthetischen Werte. 25-m-Raster-Layer folgen in Stufe 2.
    ================================================================ */
 "use strict";
-console.log('%c[Portal] app.js v56 aktiv - Interpretation-Overlays: zIndex/bringToFront-Fix (Sichtbarkeit)','color:#1a9850;font-weight:bold');
+console.log('%c[Portal] app.js v57 aktiv - Interpretation-Overlays: hoher zIndex (Sichtbarkeit ueber Basiskarte)','color:#1a9850;font-weight:bold');
 
 /* ---- Konstanten -------------------------------------------------- */
 const PB = 12.4;          // globale planetare Grenze (Virkki et al. 2026)
@@ -800,7 +800,9 @@ function syncInterpButtons(){
 async function interpGetLayer(key){
   if(interpLayers[key]) return interpLayers[key];
   const gr=await loadGeoraster(INTERP[key].file);
-  interpLayers[key]=new GeoRasterLayer({georaster:gr, opacity:0.6, resolution:128, zIndex:700, keepBuffer:8,
+  // zIndex bewusst hoch: innerhalb der tile-pane sicher ÜBER der Basiskarte,
+  // aber weiterhin UNTER den Zell-Vektoren/-Beschriftungen (die in höheren Panes liegen).
+  interpLayers[key]=new GeoRasterLayer({georaster:gr, opacity:0.6, resolution:128, zIndex:5000, keepBuffer:8,
     pixelValuesToColorFn:interpColorFn(key)});
   return interpLayers[key];
 }
@@ -812,7 +814,6 @@ async function interpToggle(key){
     try{
       const l=await interpGetLayer(next);
       l.setOpacity(0.6); l.addTo(map);
-      if(typeof l.bringToFront==='function') l.bringToFront();   // sonst verdeckt vom Kachel-Stapel
       if(typeof l.redraw==='function') l.redraw();   // Zeichnen erzwingen (kein View-Wechsel noetig)
     }catch(e){ console.error('Interpretation-COG konnte nicht geladen werden:',next,e);
       interpCurrent=null; interpTopKey=null; }
