@@ -4,7 +4,7 @@
    KEINE synthetischen Werte. 25-m-Raster-Layer folgen in Stufe 2.
    ================================================================ */
 "use strict";
-console.log('%c[Fallstudie] app.js v54 aktiv - ArrayBuffer-Laden + robuster Layer-Tausch','color:#1a9850;font-weight:bold');
+console.log('%c[Portal] app.js v55 aktiv - Interpretation: eine aktive Ebene + verkleinerte AOI-Overlays','color:#1a9850;font-weight:bold');
 
 /* ---- Konstanten -------------------------------------------------- */
 const PB = 12.4;          // globale planetare Grenze (Virkki et al. 2026)
@@ -756,13 +756,13 @@ function loadGeoraster(url){
 
 /* ===== Interpretation-Overlays (AOI-weit, COG, halbtransparent) ===== */
 const INTERP = {
-  prism_ppt:{ name:'Klima · Jahresniederschlag', unit:'mm', file:'cog/aoi/prism_ppt.tif',
+  prism_ppt:{ name:'Klima · Jahresniederschlag', unit:'mm', file:'cog/aoi/prism_ppt.tif?v=2',
     kind:'ramp', dmn:[180,560], stops:['#ffffcc','#a1dab4','#41b6c4','#2c7fb8','#253494'],
     note:'PRISM 30-J-Normal 1991–2020 · 800 m' },
-  lanid:{ name:'Bewässerung · Jahre bewässert', unit:'J', file:'cog/aoi/lanid_irrfreq.tif',
+  lanid:{ name:'Bewässerung · Jahre bewässert', unit:'J', file:'cog/aoi/lanid_irrfreq.tif?v=2',
     kind:'ramp', dmn:[1,21], stops:['#c6dbef','#6baed6','#2171b5','#08306b'], mask0:true,
     note:'LANID 1997–2017 · 0 = nicht bewässert (transparent)' },
-  nlcd:{ name:'Landnutzung (NLCD 2019)', file:'cog/aoi/nlcd2019.tif', kind:'class',
+  nlcd:{ name:'Landnutzung (NLCD 2019)', file:'cog/aoi/nlcd2019.tif?v=2', kind:'class',
     classes:{11:['#476BA0','Wasser'],21:['#DDC9C9','bebaut (offen)'],22:['#D89382','bebaut (gering)'],
       23:['#ED0000','bebaut (mittel)'],24:['#AA0000','bebaut (hoch)'],31:['#B2ADA3','Fels/kahl'],
       41:['#68AA63','Laubwald'],42:['#1C6330','Nadelwald'],43:['#B5C98E','Mischwald'],52:['#CCBA7C','Strauch'],
