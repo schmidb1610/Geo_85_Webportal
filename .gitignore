@@ -11,6 +11,7 @@ data/cell_stats.json.bak
 # ── Temporäre Artefakte (GDAL / Tests) ────────────────────────
 *.tmp
 *.ovr.tmp
+*.aux.xml
 _probe_write.txt
 **/__deltest
 

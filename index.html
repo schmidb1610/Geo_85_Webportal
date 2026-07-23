@@ -477,6 +477,16 @@
   .btn:hover{border-color:var(--ink-3);color:var(--ink)}
   .btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.6}
 
+  /* Verbundene Button-Gruppe (z. B. Fallstudie + zugehöriger Info-Button) */
+  .btn-group{display:inline-flex;align-items:center}
+  .btn-group .btn{border-radius:0;position:relative}
+  .btn-group .btn:first-child{border-top-left-radius:8px;border-bottom-left-radius:8px}
+  .btn-group .btn:last-child{border-top-right-radius:8px;border-bottom-right-radius:8px}
+  .btn-group .btn+.btn{margin-left:-1px}
+  .btn-group .btn:hover{z-index:1}
+  .btn-group .btn-linked{color:var(--ink-3);gap:5px}
+  .btn-group .btn-linked svg{width:12px;height:12px}
+
   .proto-tag{font-family:var(--mono);font-size:9.5px;color:#9a5a28;
     border:1px solid #e6d3bf;background:#faf1e6;border-radius:6px;padding:4px 9px;
     letter-spacing:.09em;text-transform:uppercase;white-space:nowrap}

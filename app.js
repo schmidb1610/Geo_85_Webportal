@@ -960,16 +960,21 @@ const FS_CONTEXT_HTML = `
 function initFallstudie(){
   const toolset=document.querySelector('.toolset');
   if(!toolset) return;
+  // Fallstudie + zugehöriger Info-Button als EINE verbundene Gruppe, damit
+  // erkennbar ist, dass die Info zur Fallstudie gehört.
+  const grp=document.createElement('span');
+  grp.className='btn-group'; grp.id='fsGroup';
   const btn=document.createElement('button');
   btn.className='btn'; btn.id='fsBtn'; btn.title='Fallstudie Zelle 23 · 25-m-Raster';
   btn.innerHTML='<svg viewBox="0 0 24 24"><path d="M3 7l6-3 6 3 6-3v13l-6 3-6-3-6 3zM9 4v13M15 7v13"/></svg>Fallstudie';
-  toolset.insertBefore(btn, toolset.querySelector('.proto-tag'));
+  grp.appendChild(btn);
 
-  // Info-Button (Kontext & Hintergrund) direkt neben dem Fallstudie-Button
+  // Info-Button (Kontext & Hintergrund) — sichtbar an die Fallstudie angedockt
   const infoBtn=document.createElement('button');
-  infoBtn.className='btn'; infoBtn.id='fsInfoBtn'; infoBtn.title='Kontext & Hintergrund zur Fallstudie';
+  infoBtn.className='btn btn-linked'; infoBtn.id='fsInfoBtn'; infoBtn.title='Kontext & Hintergrund zur Fallstudie';
   infoBtn.innerHTML='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.4v.2"/></svg>Info';
-  toolset.insertBefore(infoBtn, toolset.querySelector('.proto-tag'));
+  grp.appendChild(infoBtn);
+  toolset.insertBefore(grp, toolset.querySelector('.proto-tag'));
   const iBack=document.createElement('div');
   iBack.className='modal-back'; iBack.id='fsInfoBack';
   iBack.innerHTML=`<div class="modal info-modal">
@@ -1165,7 +1170,7 @@ function initScan(){
   const toolset=document.querySelector('.toolset'); if(!toolset) return;
   const b=document.createElement('button'); b.className='btn'; b.id='scanBtn'; b.title='SCAN-Bodenfeuchte-Stationen ein/aus';
   b.innerHTML='<svg viewBox="0 0 24 24"><path d="M12 2C8 6 6 9 6 13a6 6 0 0012 0c0-4-2-7-6-11z"/></svg>SCAN';
-  toolset.insertBefore(b, document.getElementById('fsBtn')||toolset.querySelector('.proto-tag'));
+  toolset.insertBefore(b, document.getElementById('fsGroup')||toolset.querySelector('.proto-tag'));
   b.addEventListener('click',()=>{ scanOn=!scanOn; b.classList.toggle('active',scanOn);
     if(scanOn){ scanLayer.addTo(map); } else { map.removeLayer(scanLayer); } });
 }
@@ -1174,7 +1179,7 @@ function initInterp(){
   const btn=document.createElement('button'); btn.className='btn'; btn.id='interpBtn';
   btn.title='Interpretation-Overlays (Klima/Bewässerung/Landnutzung) über alle 12 Zellen';
   btn.innerHTML='<svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5 9-5zM3 12l9 5 9-5M3 16.5l9 5 9-5"/></svg>Interpretation';
-  toolset.insertBefore(btn, document.getElementById('scanBtn')||document.getElementById('fsBtn')||toolset.querySelector('.proto-tag'));
+  toolset.insertBefore(btn, document.getElementById('scanBtn')||document.getElementById('fsGroup')||toolset.querySelector('.proto-tag'));
   const panel=document.createElement('div'); panel.id='interpPanel';
   panel.innerHTML=`<div class="ip-head"><b>Interpretation · Overlays</b><button class="ip-x" id="interpClose" title="schließen">×</button></div>
     <div id="interpControl">
