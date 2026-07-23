@@ -4,7 +4,7 @@
    KEINE synthetischen Werte. 25-m-Raster-Layer folgen in Stufe 2.
    ================================================================ */
 "use strict";
-console.log('%c[Portal] app.js v57 aktiv - Interpretation-Overlays: hoher zIndex (Sichtbarkeit ueber Basiskarte)','color:#1a9850;font-weight:bold');
+console.log('%c[Portal] app.js v72 aktiv - kategoriale Overlays: zoom-unabhaengiger Klassen-Snap','color:#1a9850;font-weight:bold');
 
 /* ---- Konstanten -------------------------------------------------- */
 const PB = 12.4;          // globale planetare Grenze (Virkki et al. 2026)
@@ -89,6 +89,7 @@ function initMap(){
   };
   map = L.map('map',{minZoom:2,maxZoom:13,zoomSnap:1,zoomDelta:1,attributionControl:true,zoomControl:true})
          .setView([46.9,-118.4],8);
+  map.options.fadeAnimation=false;   // removeLayer der Overlays sofort abraeumen (kein Stale beim Wechsel)
 
   bm.sat   = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
               {maxZoom:17, attribution:'Imagery © Esri, Maxar, USGS'});
@@ -418,7 +419,6 @@ function renderPanel(c,isAOI){
     <div class="section" style="border-bottom:none">
       <h3>Wissenschaftliche Ehrlichkeit <span class="q" title="Erklärung ein-/ausblenden">?</span></h3>
       <div class="q-pop" hidden><p>Der Zell-/AOI-Korridor (obere Grenze) hat bei nur 12 Zellen ein breites Konfidenzintervall (statistisch instabil). Die globale Grenze 12,4 % dient als Referenz, nicht als lokale Messlatte (nicht 1:1 vergleichbar). Zeittrends sind ensemble-fragil; robust sind Größenordnung der Grenzen, die DHF&gt;CRF-Struktur und der Skalenbefund.</p></div>
-      <p class="note-p">Alle Werte stammen aus den Ergebnisdateien (Disagg_v6). Der Zell-/AOI-Korridor ist statistisch unsicher (breites KI der oberen Grenze, nur 12 Zellen). Die globale Grenze (12,4 %) dient als konzeptioneller Bezug — nicht als lokale Messlatte (ein einzelner %-Wert ist nicht 1:1 vergleichbar). Die 25-m-Raster (Stufe 2) zeigen topografisch-edaphische Prädisposition, keine gemessene 25-m-Grenzüberschreitung.</p>
     </div>`;
   refreshYearMarker(); wirePanelSlider(); syncInterpButtons();
 }
@@ -446,7 +446,7 @@ function showProjectOverview(){
     </div>
     <div class="section">
       <h3>Aufbau</h3>
-      <p class="note-p"><b>Global:</b> das 0,5°-ISIMIP-Gitter (grau) — die Methode gilt weltweit. <b>Palouse:</b> die 12 untersuchten 0,5°-Zellen mit dem Gesamtergebnis; Klick auf eine Zelle öffnet ihre Werte, Zeitreihen, 25-m-Layer &amp; Downloads. <b>Fallstudie (Zelle 23):</b> auf 25 m disaggregiert — Endergebnis sind Schutzflächen-Kandidaten.</p>
+      <p class="note-p"><b>Global:</b> das 0,5°-ISIMIP-Gitter (grau) — die Methode gilt theoretisch weltweit. <b>Palouse:</b> die 12 untersuchten 0,5°-Zellen mit dem Gesamtergebnis; Klick auf eine Zelle öffnet ihre Werte, Zeitreihen und 25-m-Layer. <b>Fallstudie (Zelle 23):</b> auf 25 m disaggregiert — Endergebnis sind Schutzflächen-Kandidaten.</p>
     </div>
     <div class="section">
       <h3>Datenbasis</h3>
@@ -756,13 +756,13 @@ function loadGeoraster(url){
 
 /* ===== Interpretation-Overlays (AOI-weit, COG, halbtransparent) ===== */
 const INTERP = {
-  prism_ppt:{ name:'Klima · Jahresniederschlag', unit:'mm', file:'cog/aoi/prism_ppt.tif?v=2',
+  prism_ppt:{ name:'Klima · Jahresniederschlag', unit:'mm', file:'cog/aoi/prism_ppt.tif?v=2', png:'cog/aoi/prism_ppt.png?v=1', bounds:[[46.46222,-120.05647],[47.53925,-117.00003]],
     kind:'ramp', dmn:[180,560], stops:['#ffffcc','#a1dab4','#41b6c4','#2c7fb8','#253494'],
     note:'PRISM 30-J-Normal 1991–2020 · 800 m' },
-  lanid:{ name:'Bewässerung · Jahre bewässert', unit:'J', file:'cog/aoi/lanid_irrfreq.tif?v=2',
+  lanid:{ name:'Bewässerung · Jahre bewässert', unit:'J', file:'cog/aoi/lanid_irrfreq.tif?v=5', png:'cog/aoi/lanid_irrfreq.png?v=1', bounds:[[46.46056,-120.05647],[47.53926,-117.00011]],
     kind:'ramp', dmn:[1,21], stops:['#c6dbef','#6baed6','#2171b5','#08306b'], mask0:true,
     note:'LANID 1997–2017 · 0 = nicht bewässert (transparent)' },
-  nlcd:{ name:'Landnutzung (NLCD 2019)', file:'cog/aoi/nlcd2019.tif?v=2', kind:'class',
+  nlcd:{ name:'Landnutzung (NLCD 2019)', file:'cog/aoi/nlcd2019.tif?v=5', png:'cog/aoi/nlcd2019.png?v=1', bounds:[[46.46056,-120.05647],[47.53926,-117.00011]], kind:'class',
     classes:{11:['#476BA0','Wasser'],21:['#DDC9C9','bebaut (offen)'],22:['#D89382','bebaut (gering)'],
       23:['#ED0000','bebaut (mittel)'],24:['#AA0000','bebaut (hoch)'],31:['#B2ADA3','Fels/kahl'],
       41:['#68AA63','Laubwald'],42:['#1C6330','Nadelwald'],43:['#B5C98E','Mischwald'],52:['#CCBA7C','Strauch'],
@@ -775,7 +775,16 @@ function interpColorFn(key){
   const L=INTERP[key];
   if(L.kind==='class'){
     const m={}; for(const k in L.classes) m[+k]=_h2r(L.classes[k][0]);
-    return v=>{ let x=v[0]; if(x==null||isNaN(x)) return null; x=Math.round(x); return (x in m)?`rgb(${m[x].join(',')})`:null; };
+    const keys=Object.keys(m).map(Number), kmin=Math.min(...keys), kmax=Math.max(...keys);
+    return v=>{ let x=v[0]; if(x==null||isNaN(x)) return null;
+      const r=Math.round(x);
+      if(r in m) return `rgb(${m[r].join(',')})`;
+      // Interpolierter Zwischenwert: innerhalb des Klassenbereichs (11..95) auf die
+      // nächste Klasse runden — zoom-unabhängig. Nur echte NoData (0, 250) bleiben transparent.
+      if(x < kmin-3 || x > kmax+3) return null;
+      let best=keys[0], bd=Math.abs(x-best);
+      for(const k of keys){ const d=Math.abs(x-k); if(d<bd){bd=d;best=k;} }
+      return `rgb(${m[best].join(',')})`; };
   }
   const st=L.stops.map(_h2r), lo=L.dmn[0], hi=L.dmn[1];
   return v=>{ v=v[0];
@@ -797,33 +806,25 @@ let interpTopKey=null;    // fuer Legende (=interpCurrent)
 function syncInterpButtons(){
   document.querySelectorAll('#interpControl .ip-lyr').forEach(b=>b.classList.toggle('on',interpCurrent===b.dataset.k));
 }
-async function interpGetLayer(key){
-  if(interpLayers[key]) return interpLayers[key];
-  const gr=await loadGeoraster(INTERP[key].file);
-  // zIndex bewusst hoch: innerhalb der tile-pane sicher ÜBER der Basiskarte,
-  // aber weiterhin UNTER den Zell-Vektoren/-Beschriftungen (die in höheren Panes liegen).
-  interpLayers[key]=new GeoRasterLayer({georaster:gr, opacity:0.6, resolution:128, zIndex:5000, keepBuffer:8,
-    pixelValuesToColorFn:interpColorFn(key)});
-  return interpLayers[key];
-}
+let interpLoaded=false;
+// Jede Ebene bekommt einen eigenen Map-Pane; die Sichtbarkeit wird ueber die CSS-Opazitaet
+// des PANES gesteuert (nicht ueber layer.setOpacity). Pane-Opazitaet gilt fuer ALLE Kacheln
+// aller Zoomstufen und wird von georaster-layer/GridLayer nie angefasst -> zuverlaessig,
+// kein "Geistern" beim Wechsel, kein Ausfall auf der AOI-Landing-Zoomstufe, kein redraw noetig.
+let interpOverlay=null, interpOpacity=0.6;
+// Overlays als vorgerenderte PNGs via L.imageOverlay (Standard-Leaflet-Bild statt georaster-layer):
+// zuverlaessiges Umschalten auf JEDER Zoomstufe, kein Stale, keine Pane-/Opazitaets-/Tile-Reuse-Bugs.
 async function interpToggle(key){
-  const next=(interpCurrent===key)?null:key;   // erneuter Klick blendet aus
-  if(interpCurrent && interpLayers[interpCurrent]) map.removeLayer(interpLayers[interpCurrent]);
-  interpCurrent=next; interpTopKey=next;
-  if(next){
-    try{
-      const l=await interpGetLayer(next);
-      l.setOpacity(0.6); l.addTo(map);
-      if(typeof l.redraw==='function') l.redraw();   // Zeichnen erzwingen (kein View-Wechsel noetig)
-    }catch(e){ console.error('Interpretation-COG konnte nicht geladen werden:',next,e);
-      interpCurrent=null; interpTopKey=null; }
-  }
+  if(interpOverlay){ map.removeLayer(interpOverlay); interpOverlay=null; }
+  if(interpCurrent===key){ interpCurrent=null; interpTopKey=null; interpRenderLegend(); syncInterpButtons(); return; }
+  interpCurrent=key; interpTopKey=key;
+  interpOverlay=L.imageOverlay(INTERP[key].png, INTERP[key].bounds, {opacity:interpOpacity, interactive:false, zIndex:450});
+  interpOverlay.addTo(map);
   interpRenderLegend(); syncInterpButtons();
 }
 function interpClear(){
-  if(interpCurrent && interpLayers[interpCurrent]) map.removeLayer(interpLayers[interpCurrent]);
-  interpCurrent=null; interpTopKey=null;
-  interpRenderLegend(); syncInterpButtons();
+  if(interpOverlay){ map.removeLayer(interpOverlay); interpOverlay=null; }
+  interpCurrent=null; interpTopKey=null; interpRenderLegend(); syncInterpButtons();
 }
 function interpRenderLegend(){
   const leg=document.getElementById('interpLegend'); if(!leg) return;
@@ -1183,12 +1184,19 @@ function initInterp(){
       <button class="ip-lyr" data-k="lanid">Bewässerung</button>
       <button class="ip-lyr" data-k="nlcd">Landnutzung</button>
     </div>
-    <p class="note-p" style="margin:8px 0 0;font-size:11px">AOI-weite Overlays über alle 12 Zellen, halbtransparent — unabhängig von der Zellauswahl. Ein Overlay zur Zeit; erneuter Klick blendet aus. Legende oben rechts.</p>`;
+    <div class="ip-opac" style="display:flex;align-items:center;gap:8px;margin-top:10px">
+      <label style="font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)">Deckkraft</label>
+      <input type="range" id="interpOpacity" min="0" max="100" value="60" style="flex:1;accent-color:var(--ink)">
+      <span id="interpOpacityVal" style="font-family:var(--mono);font-size:11px;color:var(--ink-2);min-width:34px;text-align:right">60&#8201;%</span>
+    </div>
+    <p class="note-p" style="margin:8px 0 0;font-size:11px">AOI-weite Overlays über alle 12 Zellen — unabhängig von der Zellauswahl. Ein Overlay zur Zeit; erneuter Klick blendet aus. Deckkraft oben regeln, Legende oben rechts.</p>`;
   (document.querySelector('.map-wrap')||document.body).appendChild(panel);
   const setOpen=o=>{ panel.style.display=o?'block':'none'; btn.classList.toggle('active',o); };
   btn.addEventListener('click',()=>{ const o=panel.style.display!=='block'; setOpen(o); if(!o) interpClear(); });
   document.getElementById('interpClose').addEventListener('click',()=>{ setOpen(false); interpClear(); });
   panel.querySelectorAll('.ip-lyr').forEach(b=>b.addEventListener('click',()=>interpToggle(b.dataset.k)));
+  const os=document.getElementById('interpOpacity'), ov=document.getElementById('interpOpacityVal');
+  if(os) os.addEventListener('input',()=>{ interpOpacity=os.value/100; if(ov) ov.innerHTML=os.value+'\u2009%'; if(interpOverlay) interpOverlay.setOpacity(interpOpacity); });
 }
 // Monatsreihe (z-Anomalie) aus SCAN_MON; Station per scan_id gesucht.
 function scanMonById(id){

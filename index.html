@@ -726,8 +726,8 @@
 
   /* ---------------------------------------------------------------- Fußzeile (Provenienz) */
   footer{background:var(--paper);border-top:1px solid var(--line);
-    display:flex;align-items:center;gap:22px;flex-wrap:wrap;padding:9px 22px;
-    font-family:var(--mono);font-size:10px;color:var(--ink-3);letter-spacing:.01em}
+    display:flex;align-items:center;gap:13px;flex-wrap:nowrap;white-space:nowrap;overflow:hidden;padding:8px 18px;
+    font-family:var(--mono);font-size:8.5px;color:var(--ink-3);letter-spacing:0}
   footer .prov{display:flex;align-items:center;gap:7px}
   footer .prov b{color:var(--ink-2);font-weight:500}
   footer .prov::before{content:"";width:6px;height:6px;border-radius:2px;background:var(--line-2)}
@@ -762,7 +762,7 @@
 </style>
 </head>
 
-<link rel="stylesheet" href="app.css?v=57">
+<link rel="stylesheet" href="app.css?v=60">
 <body>
 <div id="app">
 
@@ -832,12 +832,9 @@
   <!-- =========================================================== FUSSZEILE / PROVENIENZ -->
   <footer>
     <span class="prov"><b>Forcing</b>&nbsp;ISIMIP3a · obsclim/counterclim</span>
-    <span class="prov"><b>Ensemble</b>&nbsp;4 GHM (virkki) · HydroPy · WEB-DHM-SG · MIROC-INTEG-LAND (20CRv3-ERA5 &amp; -W5E5)</span>
+    <span class="prov"><b>Ensemble</b>&nbsp;4 GHM (nach Virkki et al. 2026) · HydroPy · WEB-DHM-SG · MIROC-INTEG-LAND (20CRv3-ERA5 &amp; -W5E5)</span>
     <span class="prov"><b>DEM</b>&nbsp;USGS 3DEP (1 m LiDAR → 10 m) → TWI (D∞)</span>
     <span class="prov"><b>Boden</b>&nbsp;NRCS SSURGO → AWC (soilonly)</span>
-    <span class="pf-spacer"></span>
-    <span class="prov"><b>Grenze</b>&nbsp;Virkki et al. 2026 · global 12,4 %</span>
-    <span class="prov"><b>Stand</b>&nbsp;2026-07 · Disagg_v6_virkki_soilonly</span>
   </footer>
 </div>
 
@@ -859,6 +856,6 @@
 
 
 <!-- App-Logik ausgelagert: datengetrieben, kein synthetischer Code -->
-<script src="app.js?v=57"></script>
+<script src="app.js?v=72"></script>
 </body>
 </html>
